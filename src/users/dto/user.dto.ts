@@ -8,7 +8,11 @@ export class UserDto {
   name: string;
 
   @Expose()
+  email: string;
+
+  @Expose()
   DOB: string;
+
   @Expose()
   gender: string;
 

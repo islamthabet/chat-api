@@ -6,7 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 // import * as cookie from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   app.use(helmet());
   // app.use(cookie());
   // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));

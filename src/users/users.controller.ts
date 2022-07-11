@@ -1,24 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { CurrentUser } from '../common/decratore/currentuser.decorator';
+import { UpdateUserDto, UserDto } from './dto';
 import { UserDocument } from './schema/user.schema';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
-
-import { UserDto } from './dto/user.dto';
-import { Serialization } from 'src/common/decratore/serialization.interceptor';
+import { CurrentUser, Serialization } from '../common/decorators';
+import { diskStorage } from 'multer';
 
 @Serialization(UserDto)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
 
   @Get()
   findAll(@Query() query: any) {
@@ -37,7 +39,6 @@ export class UsersController {
 
   @Get('me')
   getProfile(@CurrentUser() user: UserDocument) {
-    console.log('get me');
     return user;
   }
 
@@ -49,20 +50,29 @@ export class UsersController {
   @Patch('changeProfileImage')
   @UseInterceptors(
     FileInterceptor('image', {
-      dest: join(__dirname, 'public', 'images'),
-      // storage: ()=>{
-
-      // }
+      dest: join(__dirname, '../../public/images'),
+      storage: diskStorage({
+        destination: function (req, file, callback) {
+          callback(null, join(__dirname, '../../public/images'));
+        },
+        filename(req, file, callback) {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const extension = file.mimetype.split('/')[1];
+          callback(null, `${file.fieldname}-${uniqueSuffix}.${extension}`);
+        },
+      }),
     }),
   )
-  changeProfileImage(@UploadedFile() image: Express.Multer.File, @CurrentUser() user: UserDocument) {
-    console.log(image);
-    // return this.usersService.update(user.id, { image });
+  changeProfileImage(
+    @UploadedFile() image: Express.Multer.File,
+    @CurrentUser() user: UserDocument,
+  ) {
+    return this.usersService.changeProfileImage(image, user);
   }
 
   @Patch('me')
   updateProfile(@Body() updateUserDto: UpdateUserDto, @CurrentUser() user: UserDocument) {
-    return this.usersService.update(user.id, updateUserDto);
+    return this.usersService.profileUpdate(user, updateUserDto);
   }
 
   @Patch(':id')
@@ -72,6 +82,7 @@ export class UsersController {
 
   @Delete('me')
   deleteProfile(@CurrentUser() user: UserDocument) {
+    console.log('delete');
     return this.usersService.remove(user.id);
   }
 

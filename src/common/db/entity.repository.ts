@@ -42,7 +42,7 @@ export abstract class EntityRepository<T extends Document> {
   }
 
   async editOneById(id: string, update: unknown): Promise<T> {
-    return this.entityModel.findByIdAndUpdate(id, update);
+    return this.entityModel.findByIdAndUpdate(id, update, { new: true, runValidators: true });
   }
 
   // Delete

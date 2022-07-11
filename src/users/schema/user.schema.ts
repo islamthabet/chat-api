@@ -36,15 +36,11 @@ export class User {
   @Prop({ required: true })
   country: string;
 
-  // city
-  // @Prop({ required: true })
-  // city: string;
-
-  @Prop()
+  @Prop({ default: `http://localhost:5000/images/profile.jpg` })
   image: string;
 
   // role
-  @Prop({ required: true, enum: ['admin', 'user'] })
+  @Prop({ required: true, enum: ['admin', 'user'], default: 'user' })
   role: 'admin' | 'user';
 
   @Prop({ type: mongoose.SchemaTypes.ObjectId, ref: 'User' })
