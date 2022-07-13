@@ -12,7 +12,7 @@ export class UserDto {
   email: string;
 
   @Expose()
-  DOB: string;
+  age: string;
 
   @Expose()
   gender: string;

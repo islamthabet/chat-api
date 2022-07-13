@@ -4,6 +4,7 @@ import { UserRepository } from './user.repository';
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
+import * as moment from 'moment';
 
 @Module({
   imports: [
@@ -12,6 +13,10 @@ import { UsersController } from './users.controller';
         name: User.name,
         useFactory: () => {
           const schema = UserSchema;
+          schema.virtual('age').get(function () {
+            const user: any = this;
+            return moment().diff(moment(user.DOB), 'year').toString();
+          });
           return schema;
         },
       },
