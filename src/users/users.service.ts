@@ -1,5 +1,4 @@
 import { Password } from './../common/util/Password.class';
-import { join } from 'path';
 import { UserRepository } from './user.repository';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,12 +8,15 @@ import { UserDocument } from './schema/user.schema';
 export class UsersService {
   constructor(private userReps: UserRepository) {}
 
-  async getFriends(user: UserDocument) {
-    return this.userReps.findAll({ friends: user.id });
+  async sendFriendRequest(id: string, user: UserDocument) {
+    await this.userReps.editOneById(id, { $push: { sendRequest: user.id } });
+    return this.userReps.editOneById(user.id, { $push: { pendingResponse: id } });
   }
 
   async suggestingFriends(user: UserDocument) {
-    return this.userReps.findAll({});
+    return this.userReps.findAll({
+      _id: { $nin: [user.id, ...user.friends, ...user.pendingResponse, ...user.sendRequest] },
+    });
   }
 
   async findAll(query: any) {
@@ -22,8 +24,28 @@ export class UsersService {
     return users;
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     return this.userReps.findById(id);
+  }
+
+  async acceptFriendRequest(user: UserDocument, id: string) {
+    await this.userReps.editOneById(id, {
+      $pull: { pendingResponse: user.id },
+      $push: { friends: user.id },
+    });
+    return this.userReps.editOneById(user.id, {
+      $pull: { sendRequest: id },
+      $push: { friends: id },
+    });
+  }
+
+  async rejectFriendRequest(user: UserDocument, id: string) {
+    await this.userReps.editOneById(id, {
+      $pull: { pendingResponse: user.id },
+    });
+    return this.userReps.editOneById(user.id, {
+      $pull: { sendRequest: id },
+    });
   }
 
   async profileUpdate(user: UserDocument, updateUserDto: UpdateUserDto) {
@@ -39,7 +61,7 @@ export class UsersService {
     }
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     return this.userReps.editOneById(id, updateUserDto);
   }
 
@@ -49,16 +71,17 @@ export class UsersService {
     });
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     return this.userReps.deleteOneById(id);
   }
 
-  makeAnAdmin(role: string, id: string) {
+  async makeAnAdmin(role: string, id: string) {
     if (role === 'superAdmin') {
       return this.userReps.editOneById(id, { role: 'admin' });
     }
   }
-  removeFromAdminList(role: string, id: string) {
+
+  async removeFromAdminList(role: string, id: string) {
     if (role === 'superAdmin') {
       return this.userReps.editOneById(id, { role: 'user' });
     }

@@ -1,18 +1,11 @@
-import {
-  Injectable,
-  NestMiddleware,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { UserRepository } from './../../users/user.repository';
 import { JwtService } from './../jwt/jwt.service';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
-  constructor(
-    private readonly jwt: JwtService,
-    private readonly userRepo: UserRepository,
-  ) {}
+  constructor(private readonly jwt: JwtService, private readonly userRepo: UserRepository) {}
   async use(req: Request, res: Response, next: Function) {
     const url = req.baseUrl;
     if (
@@ -25,18 +18,17 @@ export class JwtMiddleware implements NestMiddleware {
       return;
     }
 
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      const type = url.includes('refreshToken')
-        ? 'refreshToken'
-        : 'accessToken';
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      const type = url.includes('refreshToken') ? 'refreshToken' : 'accessToken';
       const payload = this.jwt.validateToken(
         req.headers.authorization.split(' ')[1],
         type,
       ) as string;
-      const user = await this.userRepo.findById(payload);
+      const user = await this.userRepo.findByIdWithPopulate(payload, [
+        { path: 'pendingResponse', property: 'name | email | country | image' },
+        { path: 'sendRequest', property: 'name | email | country | image' },
+        { path: 'friends', property: 'name | email | country | image' },
+      ]);
       if (!user) {
         throw new UnauthorizedException();
       }

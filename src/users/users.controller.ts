@@ -8,6 +8,7 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  Post,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto, UserDto } from './dto';
@@ -22,17 +23,17 @@ import { diskStorage } from 'multer';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Post('sendFriendRequest/:id')
+  sendFriendRequest(@CurrentUser() user: UserDocument, @Param('id') id: string) {
+    return this.usersService.sendFriendRequest(id, user);
+  }
+
   @Get()
   findAll(@Query() query: any) {
     return this.usersService.findAll(query);
   }
 
-  @Get('friends')
-  getFriends(@CurrentUser() user: UserDocument) {
-    return this.usersService.getFriends(user);
-  }
-
-  @Get('suggest-friend')
+  @Get('suggestFriend')
   suggestingFriends(@CurrentUser() user: UserDocument) {
     return this.usersService.suggestingFriends(user);
   }
@@ -45,6 +46,16 @@ export class UsersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
+  }
+
+  @Patch('acceptRequest/:id')
+  acceptFriendRequest(@CurrentUser() user: UserDocument, @Param('id') id: string) {
+    return this.usersService.acceptFriendRequest(user, id);
+  }
+
+  @Patch('rejectRequest/:id')
+  rejectFriendRequest(@CurrentUser() user: UserDocument, @Param('id') id: string) {
+    return this.usersService.rejectFriendRequest(user, id);
   }
 
   @Patch('changeProfileImage')
@@ -82,7 +93,6 @@ export class UsersController {
 
   @Delete('me')
   deleteProfile(@CurrentUser() user: UserDocument) {
-    console.log('delete');
     return this.usersService.remove(user.id);
   }
 

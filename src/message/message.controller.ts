@@ -1,39 +1,29 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { CreateMessageDto, UpdateMessageDto, MessageDto } from './dto';
+import { CurrentUser, Serialization } from '../common/decorators';
 import { UserDocument } from './../users/schema/user.schema';
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-} from '@nestjs/common';
 import { MessageService } from './message.service';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
-import { CurrentUser } from 'src/common/decorators';
 
+@Serialization(MessageDto)
+@ApiTags('message')
 @Controller('message')
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
   @Post()
-  create(
-    @Body() createMessageDto: CreateMessageDto,
-    @CurrentUser() user: UserDocument,
-  ) {
+  create(@Body() createMessageDto: CreateMessageDto, @CurrentUser() user: UserDocument) {
     return this.messageService.create(createMessageDto, user.id);
   }
 
   @Get()
-  findAll(@Query() query: any, @CurrentUser() user: UserDocument) {
-    return this.messageService.findAll(query, user.id);
+  findAll(@CurrentUser() user: UserDocument) {
+    return this.messageService.findAll(user.id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.messageService.findOne(id);
+  findOne(@Param('id') id: string, @CurrentUser() user: UserDocument) {
+    return this.messageService.findOne(id, user.id);
   }
 
   @Patch(':id')

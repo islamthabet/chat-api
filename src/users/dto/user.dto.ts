@@ -1,4 +1,5 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
+import { User } from '../schema/user.schema';
 
 export class UserDto {
   @Expose()
@@ -29,5 +30,20 @@ export class UserDto {
   role: string;
 
   @Expose()
-  friends: any;
+  @Transform((params) => {
+    return params.obj.sendRequest;
+  })
+  sendRequest: [User];
+
+  @Expose()
+  @Transform((params) => {
+    return params.obj.pendingResponse;
+  })
+  pendingResponse: [User];
+
+  @Expose()
+  @Transform((params) => {
+    return params.obj.friends;
+  })
+  friends: [User];
 }

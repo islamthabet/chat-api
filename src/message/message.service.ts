@@ -10,14 +10,17 @@ export class MessageService {
     return this.messageRepo.create({ ...createMessageDto, from: userId });
   }
 
-  findAll(query: any, userId: string) {
-    query.from = userId;
-    query.to = userId;
-    return this.messageRepo.findAll(query);
+  findAll(userId: string) {
+    return this.messageRepo.findAll({ $or: [{ from: userId }, { to: userId }] });
   }
 
-  findOne(id: string) {
-    return this.messageRepo.findById(id);
+  findOne(id: string, userId: string) {
+    return this.messageRepo.findAll({
+      $or: [
+        { from: userId, to: id },
+        { to: userId, from: id },
+      ],
+    });
   }
 
   update(id: string, updateMessageDto: UpdateMessageDto) {

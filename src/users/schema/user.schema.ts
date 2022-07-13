@@ -6,6 +6,12 @@ export type UserDocument = User & Document;
 
 @Schema({
   timestamps: true,
+  toJSON: {
+    virtuals: true,
+  },
+  toObject: {
+    virtuals: true,
+  },
 })
 export class User {
   //email
@@ -43,8 +49,17 @@ export class User {
   @Prop({ required: true, enum: ['admin', 'user'], default: 'user' })
   role: 'admin' | 'user';
 
-  @Prop({ type: mongoose.SchemaTypes.ObjectId, ref: 'User' })
+  @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'User', default: [] })
+  sendRequest: [User];
+
+  @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'User', default: [] })
+  pendingResponse: [User];
+
+  @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'User', default: [] })
   friends: [User];
+
+  @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'User', default: [] })
+  blockedUsers: [User];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

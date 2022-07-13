@@ -9,4 +9,12 @@ export class UserRepository extends EntityRepository<UserDocument> {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {
     super(userModel);
   }
+  async findByIdWithPopulate(id: string, populateField: Array<{ path: string; property: string }>) {
+    const entity = this.userModel.findById(id);
+    populateField.forEach((field) => {
+      entity.populate(field.path, field.property);
+    });
+
+    return entity;
+  }
 }

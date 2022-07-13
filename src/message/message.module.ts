@@ -6,7 +6,22 @@ import { MessageService } from './message.service';
 import { MessageController } from './message.controller';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }])],
+  imports: [
+    MongooseModule.forFeatureAsync([
+      {
+        name: Message.name,
+        useFactory() {
+          const schema = MessageSchema;
+          schema.pre(/find/, function (next) {
+            this.populate('from', 'id | name | email');
+            this.populate('to', 'id | name | email');
+            next();
+          });
+          return schema;
+        },
+      },
+    ]),
+  ],
   controllers: [MessageController],
   providers: [MessageService, MessageRepository],
   exports: [MessageRepository],

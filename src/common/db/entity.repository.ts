@@ -19,6 +19,7 @@ export abstract class EntityRepository<T extends Document> {
       const element = query[key];
       if (!excludedFelids.includes(key)) filter[key] = element;
     }
+
     const entity = this.entityModel.find(filter);
 
     if (query.sort) entity.sort(query.sort);
@@ -33,7 +34,7 @@ export abstract class EntityRepository<T extends Document> {
     return this.entityModel.findOne(filter);
   }
   async findById(id: string): Promise<T> {
-    return this.entityModel.findById(id);
+    return this.entityModel.findById(id).exec();
   }
 
   // Update
