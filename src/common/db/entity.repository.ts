@@ -19,7 +19,7 @@ export abstract class EntityRepository<T extends Document> {
     for (const key in query) {
       const element = query[key];
       if (!excludedFelids.includes(key)) {
-        if (!specialFields.includes(key)) filter[key] = { $regex: '.*' + element + '.*' };
+        if (!specialFields.includes(key)) filter[key] = element;
         else {
           filter[Object.keys(query[key])[0]] = element[Object.keys(query[key])[0]];
         }

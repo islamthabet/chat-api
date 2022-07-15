@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
+import { Room } from 'src/rooms/schema/room.schema';
 
 export type UserDocument = User & Document;
 
@@ -54,6 +55,9 @@ export class User {
 
   @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'User', default: [] })
   pendingResponse: [User];
+
+  @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'Room', default: [] })
+  roomJoinRequests: [Room];
 
   @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'User', default: [] })
   friends: [User];

@@ -9,8 +9,12 @@ export class MessageDto {
   from: User;
 
   @Expose()
-  @Transform((prop) => prop.obj.to)
-  to: User;
+  @Transform((prop) => prop.obj.toUser)
+  toUser: User;
+
+  @Expose()
+  @Transform((prop) => prop.obj.toRoom)
+  toRoom: User;
 
   @Expose()
   message: string;

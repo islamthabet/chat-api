@@ -14,7 +14,8 @@ import { MessageController } from './message.controller';
           const schema = MessageSchema;
           schema.pre(/find/, function (next) {
             this.populate('from', 'id | name | email');
-            this.populate('to', 'id | name | email');
+            this.populate('toUser', 'id | name | email');
+            this.populate('toRoom', 'id | name');
             next();
           });
           return schema;

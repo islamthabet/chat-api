@@ -21,9 +21,13 @@ export class MessageController {
     return this.messageService.findAll(user.id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string, @CurrentUser() user: UserDocument) {
-    return this.messageService.findOne(id, user.id);
+  @Get(':id/:type')
+  findOne(
+    @Param('id') id: string,
+    @Param('type') type: 'user' | 'room',
+    @CurrentUser() user: UserDocument,
+  ) {
+    return this.messageService.findOne(id, user.id, type);
   }
 
   @Patch(':id')

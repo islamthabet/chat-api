@@ -13,6 +13,7 @@ import { NotificationModule } from './notification/notification.module';
 import { AppService } from './app.service';
 import { JwtModule } from './common/jwt/jwt.module';
 // import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { RoomsModule } from './rooms/rooms.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { JwtModule } from './common/jwt/jwt.module';
     MessageModule,
     NotificationModule,
     JwtModule,
+    RoomsModule,
   ],
   controllers: [AppController],
   providers: [
