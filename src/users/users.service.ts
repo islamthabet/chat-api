@@ -15,13 +15,18 @@ export class UsersService {
 
   async suggestingFriends(user: UserDocument) {
     return this.userReps.findAll({
-      _id: { $nin: [user.id, ...user.friends, ...user.pendingResponse, ...user.sendRequest] },
+      $nin: {
+        _id: { $nin: [user.id, ...user.friends, ...user.pendingResponse, ...user.sendRequest] },
+      },
     });
   }
 
   async findAll(query: any) {
-    const users = await this.userReps.findAll(query);
-    return users;
+    return this.userReps.findAll(query);
+  }
+
+  async searchFriends(query: any, user: UserDocument) {
+    return this.userReps.findAll({ ...query, $in: { _id: { $in: [...user.friends] } } });
   }
 
   async findOne(id: string) {

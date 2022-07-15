@@ -13,11 +13,17 @@ export abstract class EntityRepository<T extends Document> {
   // Read
   async findAll(query: any): Promise<T[]> {
     const excludedFelids = ['sort', 'page', 'limit', 'felid'];
+    const specialFields = ['$nin', '$in', '$or', '$and'];
     const filter = {};
-    let totalPages = 0;
+
     for (const key in query) {
       const element = query[key];
-      if (!excludedFelids.includes(key)) filter[key] = element;
+      if (!excludedFelids.includes(key)) {
+        if (!specialFields.includes(key)) filter[key] = { $regex: '.*' + element + '.*' };
+        else {
+          filter[Object.keys(query[key])[0]] = element[Object.keys(query[key])[0]];
+        }
+      }
     }
 
     const entity = this.entityModel.find(filter);
@@ -30,6 +36,7 @@ export abstract class EntityRepository<T extends Document> {
 
     return entity;
   }
+
   async findOne(filter: FilterQuery<T>): Promise<T> {
     return this.entityModel.findOne(filter);
   }

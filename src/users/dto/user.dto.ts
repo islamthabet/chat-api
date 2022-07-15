@@ -46,4 +46,7 @@ export class UserDto {
     return params.obj.friends;
   })
   friends: [User];
+
+  @Expose()
+  lastSeen: string | boolean | Date;
 }

@@ -60,6 +60,9 @@ export class User {
 
   @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'User', default: [] })
   blockedUsers: [User];
+
+  @Prop({ type: String || Boolean || Date, default: new Date() })
+  lastSeen: string | boolean | Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

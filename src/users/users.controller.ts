@@ -28,6 +28,11 @@ export class UsersController {
     return this.usersService.sendFriendRequest(id, user);
   }
 
+  @Get('searchFriends')
+  searchFriends(@Query() query: any, @CurrentUser() user: UserDocument) {
+    return this.usersService.searchFriends(query, user);
+  }
+
   @Get()
   findAll(@Query() query: any) {
     return this.usersService.findAll(query);

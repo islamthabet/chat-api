@@ -25,9 +25,9 @@ export class JwtMiddleware implements NestMiddleware {
         type,
       ) as string;
       const user = await this.userRepo.findByIdWithPopulate(payload, [
-        { path: 'pendingResponse', property: 'name | email | country | image' },
-        { path: 'sendRequest', property: 'name | email | country | image' },
-        { path: 'friends', property: 'name | email | country | image' },
+        { path: 'pendingResponse', property: 'name | email | country | image | lastSeen' },
+        { path: 'sendRequest', property: 'name | email | country | image | lastSeen' },
+        { path: 'friends', property: 'name | email | country | image | lastSeen' },
       ]);
       if (!user) {
         throw new UnauthorizedException();
