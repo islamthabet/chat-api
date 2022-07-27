@@ -49,6 +49,10 @@ export abstract class EntityRepository<T extends Document> {
     return this.entityModel.findOneAndUpdate(filter, update);
   }
 
+  async editMany(filter: FilterQuery<T>, update: unknown): Promise<any> {
+    return this.entityModel.updateMany(filter, update);
+  }
+
   async editOneById(id: string, update: unknown): Promise<T> {
     return this.entityModel.findByIdAndUpdate(id, update, { new: true, runValidators: true });
   }
@@ -56,6 +60,9 @@ export abstract class EntityRepository<T extends Document> {
   // Delete
   async deleteOne(filter: FilterQuery<T>) {
     return this.entityModel.deleteOne(filter);
+  }
+  async deleteMany(filter: FilterQuery<T>) {
+    return this.entityModel.deleteMany(filter);
   }
   async deleteOneById(id: string) {
     return this.entityModel.findByIdAndDelete(id);

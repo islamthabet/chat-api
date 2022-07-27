@@ -14,9 +14,11 @@ import { AppService } from './app.service';
 import { JwtModule } from './common/jwt/jwt.module';
 // import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { RoomsModule } from './rooms/rooms.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -25,7 +27,10 @@ import { RoomsModule } from './rooms/rooms.module';
     //   limit: 10,
     // }),
     // MongooseModule.forRoot('mongodb://mongo:27017/chat'),
-    MongooseModule.forRoot('mongodb://localhost:27017/chat'),
+    // MongooseModule.forRoot('mongodb://localhost:27017/chat'),
+    MongooseModule.forRoot(
+      'mongodb+srv://islamThabet:YneNSTck8FIG3iaq@chat.e4dm1eg.mongodb.net/?retryWrites=true&w=majority',
+    ),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),

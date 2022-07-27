@@ -1,3 +1,4 @@
+import { Room } from 'src/rooms/schema/room.schema';
 import { Expose, Transform } from 'class-transformer';
 import { User } from '../schema/user.schema';
 
@@ -46,6 +47,18 @@ export class UserDto {
     return params.obj.friends;
   })
   friends: [User];
+
+  @Expose()
+  @Transform((params) => {
+    return params.obj.askToJoinRoom;
+  })
+  askToJoinRoom: [Room];
+
+  @Expose()
+  @Transform((params) => {
+    return params.obj.rooms;
+  })
+  rooms: [Room];
 
   @Expose()
   lastSeen: string | boolean | Date;

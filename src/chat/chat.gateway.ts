@@ -22,17 +22,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   server: Server;
 
   handleConnection(client: Socket, ...args: any[]) {
-    this.onlineUsers.set(client.handshake.query.user, client.id);
-    this.userRepo.editOneById(client.handshake.query.user as string, { lastSeen: true });
-    client.broadcast.emit('userJoin', client.handshake.query.user);
+    if (client.handshake.query.user != 'null') {
+      this.onlineUsers.set(client.handshake.query.user, client.id);
+      this.userRepo.editOneById(client.handshake.query.user as string, { lastSeen: true });
+      client.broadcast.emit('userJoin', client.handshake.query.user);
+    }
   }
   handleDisconnect(client: Socket) {
-    this.onlineUsers.delete(client.handshake.query.user);
-    this.userRepo.editOneById(client.handshake.query.user as string, { lastSeen: new Date() });
-    client.broadcast.emit('userLeft', client.handshake.query.user);
+    if (client.handshake.query.user != 'null') {
+      this.onlineUsers.delete(client.handshake.query.user);
+      this.userRepo.editOneById(client.handshake.query.user as string, { lastSeen: new Date() });
+      client.broadcast.emit('userLeft', client.handshake.query.user);
+    }
   }
   afterInit(server: Server) {
     console.log('server');
+  }
+
+  @SubscribeMessage('new-user')
+  newUser(client: Socket) {
+    client.broadcast.emit('new-user');
   }
 
   @SubscribeMessage('message')
@@ -56,5 +65,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('user-resource')
   handelUserResource(client: Socket, payload: any) {
     this.server.to('admin').emit('user-resource-update', payload.method);
+  }
+
+  @SubscribeMessage('friend-request')
+  async friendRequest(client: Socket, to: string) {
+    const room = this.onlineUsers.get(to);
+    if (room) {
+      const user = await this.userRepo.findById(client.handshake.query.user as string);
+      this.server.to(room).emit('friend-request', user);
+    }
   }
 }

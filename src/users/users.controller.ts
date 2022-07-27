@@ -63,6 +63,16 @@ export class UsersController {
     return this.usersService.rejectFriendRequest(user, id);
   }
 
+  @Patch('unfriend/:id')
+  unfriend(@CurrentUser() user: UserDocument, @Param('id') id: string) {
+    return this.usersService.unfriend(user, id);
+  }
+
+  @Patch('blockUser/:id')
+  blockUser(@CurrentUser() user: UserDocument, @Param('id') id: string) {
+    return this.usersService.blockUser(user, id);
+  }
+
   @Patch('changeProfileImage')
   @UseInterceptors(
     FileInterceptor('image', {

@@ -1,3 +1,4 @@
+import { UsersModule } from './../users/users.module';
 import { Room, RoomSchema } from './schema/room.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
@@ -7,15 +8,16 @@ import { RoomRepository } from './room.repository';
 
 @Module({
   imports: [
+    UsersModule,
     MongooseModule.forFeatureAsync([
       {
         name: Room.name,
         useFactory() {
           const schema = RoomSchema;
           schema.pre(/find/, function (next) {
-            this.populate('members', 'name | email | image | age');
-            this.populate('admins', 'name | email | image | age');
-            this.populate('createdBy', 'name | email | image | age');
+            this.populate('members', 'name | email | image');
+            this.populate('admins', 'name | email | image');
+            this.populate('createdBy', 'name | email | image');
             next();
           });
           return schema;
@@ -25,5 +27,6 @@ import { RoomRepository } from './room.repository';
   ],
   controllers: [RoomsController],
   providers: [RoomsService, RoomRepository],
+  exports: [RoomRepository],
 })
 export class RoomsModule {}

@@ -31,13 +31,47 @@ export class RoomsController {
     return this.roomsService.findOne(id);
   }
 
+  @Patch('acceptRequest/:id')
+  acceptJoinRoom(@Param('id') roomId: string, @CurrentUser() user: UserDocument) {
+    return this.roomsService.acceptJoinRoom(roomId, user);
+  }
+
+  @Patch('rejectRequest/:id')
+  rejectRequest(@Param('id') roomId: string, @CurrentUser() user: UserDocument) {
+    return this.roomsService.rejectRequest(roomId, user);
+  }
+
+  @Patch('makeAnAdmins/:id')
+  makeAnAdmin(
+    @CurrentUser() user: UserDocument,
+    @Body('usersIds') usersIds: Array<string>,
+    @Param('id') roomId: string,
+  ) {
+    return this.roomsService.makeAnAdmin(user, usersIds, roomId);
+  }
+
+  @Patch('addUsers/:id')
+  addUsers(@Body('usersIds') usersIds: Array<string>, @Param('id') roomId: string) {
+    console.log(usersIds);
+    return this.roomsService.addUsersToRoom(usersIds, roomId);
+  }
+
+  @Patch('leaveRoom/:id')
+  leaveRoom(@CurrentUser() user: UserDocument, @Param('id') roomId: string) {
+    return this.roomsService.leaveRoom(user, roomId);
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return this.roomsService.update(id, updateRoomDto);
+  update(
+    @CurrentUser() user: UserDocument,
+    @Param('id') id: string,
+    @Body() updateRoomDto: UpdateRoomDto,
+  ) {
+    return this.roomsService.update(user, id, updateRoomDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.roomsService.remove(id);
+  remove(@CurrentUser() user: UserDocument, @Param('id') id: string) {
+    return this.roomsService.remove(user, id);
   }
 }

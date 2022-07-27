@@ -57,7 +57,10 @@ export class User {
   pendingResponse: [User];
 
   @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'Room', default: [] })
-  roomJoinRequests: [Room];
+  askToJoinRoom: [Room];
+
+  @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'Room', default: [] })
+  rooms: [Room];
 
   @Prop({ type: [mongoose.SchemaTypes.ObjectId], ref: 'User', default: [] })
   friends: [User];

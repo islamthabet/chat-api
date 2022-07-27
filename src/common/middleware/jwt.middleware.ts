@@ -12,6 +12,7 @@ export class JwtMiddleware implements NestMiddleware {
       url.includes('login') ||
       url.includes('register') ||
       url.includes('resetPassword') ||
+      url.includes('event') ||
       url.includes('images')
     ) {
       next();
@@ -28,6 +29,8 @@ export class JwtMiddleware implements NestMiddleware {
         { path: 'pendingResponse', property: 'name | email | country | image | lastSeen' },
         { path: 'sendRequest', property: 'name | email | country | image | lastSeen' },
         { path: 'friends', property: 'name | email | country | image | lastSeen' },
+        { path: 'askToJoinRoom', property: 'name | image' },
+        { path: 'rooms', property: 'name | image' },
       ]);
       if (!user) {
         throw new UnauthorizedException();

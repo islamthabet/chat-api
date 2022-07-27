@@ -11,6 +11,10 @@ export class CreateRoomDto {
 
   @IsOptional()
   @IsArray()
+  userPendingRequests: Array<string>;
+
+  @IsOptional()
+  @IsArray()
   admins: Array<string>;
 
   @IsOptional()

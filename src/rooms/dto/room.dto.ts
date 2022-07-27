@@ -19,6 +19,10 @@ export class RoomDto {
   members: Array<User>;
 
   @Expose()
+  @Transform((prop) => prop.obj.userPendingRequests)
+  userPendingRequests: Array<User>;
+
+  @Expose()
   @Transform((prop) => prop.obj.admins)
   admins: Array<User>;
 
