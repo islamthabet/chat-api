@@ -1,3 +1,4 @@
+import { CloudinaryService } from './../cloudinary/cloudinary.service';
 import {
   UserRejectFriendRequestEvent,
   UserAcceptFriendRequestEvent,
@@ -18,7 +19,11 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export class UsersService {
-  constructor(private userRepo: UserRepository, private eventEmitter: EventEmitter2) {}
+  constructor(
+    private userRepo: UserRepository,
+    private eventEmitter: EventEmitter2,
+    private cloudinaryService: CloudinaryService,
+  ) {}
 
   async sendFriendRequest(id: string, user: UserDocument) {
     this.eventEmitter.emit(
@@ -117,8 +122,9 @@ export class UsersService {
   }
 
   async changeProfileImage(image: Express.Multer.File, user: UserDocument) {
+    const upload = await this.cloudinaryService.uploadImage(image);
     return this.userRepo.editOneById(user.id, {
-      image: `${process.env.API_URL}images/${image.filename}`,
+      image: upload.url,
     });
   }
 

@@ -2,14 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
-import { ValidationPipe } from '@nestjs/common';
-// import * as cookie from 'cookie-parser';
+import { ValidationPipe, INestApplication } from '@nestjs/common';
+
+export let app: INestApplication;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  app = await NestFactory.create(AppModule, { cors: true });
   app.use(helmet());
-  // app.use(cookie());
-  // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -23,6 +22,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 5000);
 }
 bootstrap();

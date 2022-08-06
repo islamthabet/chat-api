@@ -14,9 +14,8 @@ import { UsersService } from './users.service';
 import { UpdateUserDto, UserDto } from './dto';
 import { UserDocument } from './schema/user.schema';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { join } from 'path';
 import { CurrentUser, Serialization } from '../common/decorators';
-import { diskStorage } from 'multer';
+import { memoryStorage } from 'multer';
 
 @Serialization(UserDto)
 @Controller('users')
@@ -76,17 +75,18 @@ export class UsersController {
   @Patch('changeProfileImage')
   @UseInterceptors(
     FileInterceptor('image', {
-      dest: join(__dirname, '../../public/images'),
-      storage: diskStorage({
-        destination: function (req, file, callback) {
-          callback(null, join(__dirname, '../../public/images'));
-        },
-        filename(req, file, callback) {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const extension = file.mimetype.split('/')[1];
-          callback(null, `${file.fieldname}-${uniqueSuffix}.${extension}`);
-        },
-      }),
+      // dest: join(__dirname, '../../public/images'),
+      // storage: diskStorage({
+      // destination: function (req, file, callback) {
+      //   callback(null, join(__dirname, '../../public/images'));
+      // },
+      //   filename(req, file, callback) {
+      //     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      //     const extension = file.mimetype.split('/')[1];
+      //     callback(null, `${file.fieldname}-${uniqueSuffix}.${extension}`);
+      //   },
+      // }),
+      storage: memoryStorage(),
     }),
   )
   changeProfileImage(

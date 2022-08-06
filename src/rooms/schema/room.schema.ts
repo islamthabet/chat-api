@@ -11,7 +11,7 @@ export class Room {
   @Prop({ required: true, unique: true })
   name: string;
 
-  @Prop({ default: 'http://localhost:5000/images/space.webp' })
+  @Prop({ default: 'https://res.cloudinary.com/solom/image/upload/v1659097030/space_yl9qnv.webp' })
   image: string;
 
   @Prop({ required: true, type: mongoose.SchemaTypes.ObjectId, ref: 'User' })

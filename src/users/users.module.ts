@@ -1,3 +1,4 @@
+import { CloudinaryModule } from './../cloudinary/cloudinary.module';
 import { User, UserSchema } from './schema/user.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserRepository } from './user.repository';
@@ -8,6 +9,7 @@ import * as moment from 'moment';
 
 @Module({
   imports: [
+    CloudinaryModule,
     MongooseModule.forFeatureAsync([
       {
         name: User.name,

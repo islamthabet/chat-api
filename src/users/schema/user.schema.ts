@@ -1,3 +1,4 @@
+import { app } from './../../main';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
@@ -43,7 +44,7 @@ export class User {
   @Prop({ required: true })
   country: string;
 
-  @Prop({ default: `http://localhost:5000/images/profile.jpg` })
+  @Prop({ default: `https://res.cloudinary.com/solom/image/upload/v1659097030/profile_e0emlw.jpg` })
   image: string;
 
   // role

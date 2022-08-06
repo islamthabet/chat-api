@@ -11,13 +11,10 @@ export class JwtService {
 
   validateToken(token: string, type: string) {
     try {
-      const payload = verify(
+      return verify(
         token,
-        type === 'accessToken'
-          ? process.env.ACCESS_TOKEN_SECRET
-          : process.env.REFRESH_TOKEN_SECRET,
+        type === 'accessToken' ? process.env.ACCESS_TOKEN_SECRET : process.env.REFRESH_TOKEN_SECRET,
       );
-      return payload;
     } catch (err) {
       throw new UnauthorizedException();
     }

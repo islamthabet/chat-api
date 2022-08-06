@@ -1,3 +1,4 @@
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -15,22 +16,23 @@ import { JwtModule } from './common/jwt/jwt.module';
 // import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { RoomsModule } from './rooms/rooms.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { CallsModule } from './calls/calls.module';
 
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
+    CloudinaryModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: './.env',
     }),
-    // ThrottlerModule.forRoot({
-    //   ttl: 60,
-    //   limit: 10,
-    // }),
-    // MongooseModule.forRoot('mongodb://mongo:27017/chat'),
-    // MongooseModule.forRoot('mongodb://localhost:27017/chat'),
-    MongooseModule.forRoot(
-      'mongodb+srv://islamThabet:YneNSTck8FIG3iaq@chat.e4dm1eg.mongodb.net/?retryWrites=true&w=majority',
-    ),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10,
+    }),
+    MongooseModule.forRoot(process.env.MONGOOSE_URI),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
@@ -40,15 +42,16 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     NotificationModule,
     JwtModule,
     RoomsModule,
+    CallsModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     ChatGateway,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: ThrottlerGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {
