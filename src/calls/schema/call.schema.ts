@@ -13,13 +13,13 @@ export class Call {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
   from: User;
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
-  end: User;
+  to: User;
   @Prop()
   endAt: Date;
   @Prop({ enum: ['audio', 'video'] })
   type: 'audio' | 'video';
-  @Prop({ enum: ['answer', 'no-answer','reject'] })
-  status: 'answer' | 'no-answer' |'reject';
+  @Prop({ enum: ['answer', 'no-answer', 'reject'] })
+  status: 'answer' | 'no-answer' | 'reject';
 }
 
 export const CallSchema = SchemaFactory.createForClass(Call);

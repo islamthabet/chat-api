@@ -1,3 +1,4 @@
+import { UserDocument } from 'src/users/schema/user.schema';
 import { Injectable } from '@nestjs/common';
 import { CallRepository } from './Call.repository';
 import { CreateCallDto, UpdateCallDto } from './dto';
@@ -9,7 +10,8 @@ export class CallsService {
     return this.callRepo.create(createCallDto);
   }
 
-  findAll() {
+  findAll(user: UserDocument) {
+    // return this.callRepo.findAll({ $or: [{ from: user.id }, { to: user.id }] });
     return this.callRepo.findAll({});
   }
 

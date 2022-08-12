@@ -3,7 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 import { CallsService } from './calls.service';
 import { CallsController } from './calls.controller';
-import moment from 'moment';
 import { CallRepository } from './Call.repository';
 
 @Module({
@@ -13,15 +12,12 @@ import { CallRepository } from './Call.repository';
         name: Call.name,
         useFactory: () => {
           const schema = CallSchema;
-          schema.virtual('duration').get(function () {
-            const call: any = this;
-            return moment(call.endAt).diff(call.createdAt, 'minutes');
-          });
           schema.pre(/find/, function (next) {
             this.populate('from', 'name | image');
             this.populate('to', 'name | image');
             next();
           });
+
           return schema;
         },
       },

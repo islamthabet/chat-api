@@ -1,6 +1,7 @@
+import { UserDocument } from 'src/users/schema/user.schema';
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Serialization } from '../common/decorators';
+import { CurrentUser, Serialization } from '../common/decorators';
 import { CallsService } from './calls.service';
 import { CallDto, CreateCallDto, UpdateCallDto } from './dto';
 
@@ -16,8 +17,8 @@ export class CallsController {
   }
 
   @Get()
-  findAll() {
-    return this.callsService.findAll();
+  findAll(@CurrentUser() user: UserDocument) {
+    return this.callsService.findAll(user);
   }
 
   @Get(':id')
