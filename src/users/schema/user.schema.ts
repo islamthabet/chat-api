@@ -1,8 +1,22 @@
-import { app } from './../../main';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { Room } from 'src/rooms/schema/room.schema';
+import { IsArray, IsDefined, IsNotEmpty, IsString } from 'class-validator';
+
+export class CountryDto {
+  @IsNotEmpty()
+  @IsString()
+  type: 'Point';
+
+  @IsArray()
+  @IsDefined()
+  coordinates: Array<number>;
+
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+}
 
 export type UserDocument = User & Document;
 
@@ -41,8 +55,12 @@ export class User {
   phone: string;
 
   // country
-  @Prop({ required: true })
-  country: string;
+  @Prop({ required: true, type: CountryDto })
+  country: {
+    type: 'Point';
+    coordinates: [number];
+    title: string;
+  };
 
   @Prop({ default: `https://res.cloudinary.com/solom/image/upload/v1659097030/profile_e0emlw.jpg` })
   image: string;

@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { Document, FilterQuery, Model } from 'mongoose';
 
 export abstract class EntityRepository<T extends Document> {
@@ -12,7 +11,7 @@ export abstract class EntityRepository<T extends Document> {
 
   // Read
   async findAll(query: any): Promise<T[]> {
-    const excludedFelids = ['sort', 'page', 'limit', 'felid'];
+    const excludedFelids = ['sort', 'page', 'limit', 'felid', 'aggregate'];
     const specialFields = ['$nin', '$in', '$or', '$and'];
     const filter = {};
 
@@ -28,11 +27,39 @@ export abstract class EntityRepository<T extends Document> {
 
     const entity = this.entityModel.find(filter);
 
-    if (query.sort) entity.sort(query.sort);
+    if (query.sort) {
+      if (query.geometry) {
+        entity.sort(query.sort).find({
+          [query.geometry.field]: {
+            $near: {
+              $geometry: {
+                type: query.geometry.type,
+                coordinates: query.geometry.coordinates,
+              },
+            },
+          },
+        });
+      } else {
+        entity.sort(query.sort);
+      }
+    }
     if (query.page) {
       entity.skip(+query.page * +query.limit).limit(+query.limit);
     }
     if (query.felid) entity.select(query.felid);
+
+    if (query.geometry) {
+      entity.find({
+        [query.geometry.field]: {
+          $near: {
+            $geometry: {
+              type: query.geometry.type,
+              coordinates: query.geometry.coordinates,
+            },
+          },
+        },
+      });
+    }
 
     return entity;
   }

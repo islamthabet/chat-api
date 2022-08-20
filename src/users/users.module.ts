@@ -15,6 +15,7 @@ import * as moment from 'moment';
         name: User.name,
         useFactory: () => {
           const schema = UserSchema;
+          schema.index({ country: '2dsphere' });
           schema.virtual('age').get(function () {
             const user: any = this;
             return moment().diff(moment(user.DOB), 'year').toString();

@@ -17,4 +17,20 @@ export class UserRepository extends EntityRepository<UserDocument> {
 
     return entity;
   }
+
+  async getSuggesting(user: UserDocument) {
+    return this.userModel
+      .find({
+        _id: { $nin: [user.id, ...user.friends, ...user.pendingResponse, ...user.sendRequest] },
+        country: {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: user.country.coordinates,
+            },
+          },
+        },
+      })
+      .sort(`+DOB | ${user.gender === 'male' ? '+gender' : '-gender'}`);
+  }
 }

@@ -12,4 +12,6 @@ export class CreateMessageDto {
   @IsOptional()
   @IsString()
   toRoom: string;
+
+  file: any;
 }

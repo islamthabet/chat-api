@@ -22,7 +22,7 @@ export class UserDto {
   phone: string;
 
   @Expose()
-  country: string;
+  country: any;
 
   @Expose()
   image: string;

@@ -6,8 +6,13 @@ import {
   IsDateString,
   IsEnum,
   IsPhoneNumber,
-  IsString,
+  IsDefined,
+  ValidateNested,
+  IsObject,
+  IsNotEmptyObject,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { CountryDto } from '../schema/user.schema';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -39,9 +44,12 @@ export class UpdateUserDto {
   @IsPhoneNumber('EG')
   phone: string;
 
-  @IsOptional()
-  @IsString()
-  country: string;
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @IsDefined()
+  @Type(() => CountryDto)
+  country: CountryDto;
 
   @IsOptional()
   image: any;

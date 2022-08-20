@@ -65,11 +65,21 @@ export class UsersService {
   }
 
   async suggestingFriends(user: UserDocument) {
-    return this.userRepo.findAll({
-      $nin: {
-        _id: { $nin: [user.id, ...user.friends, ...user.pendingResponse, ...user.sendRequest] },
-      },
-    });
+    return this.userRepo.getSuggesting(user);
+    // return this.userRepo.findAll({
+    //   $nin: {
+    //     _id: { $nin: [user.id, ...user.friends, ...user.pendingResponse, ...user.sendRequest] },
+    //   },
+    //   geometry: {
+    //     field: 'country',
+    //     type: 'Point',
+    //     coordinates: user.country.coordinates,
+    //   },
+    //   // sort: [
+    //   //   ['gender', user.gender === 'male' ? 1 : -1],
+    //   //   ['DOB', -1],
+    //   // ],
+    // });
   }
 
   async findAll(query: any) {
